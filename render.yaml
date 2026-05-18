@@ -1,19 +1,84 @@
 services:
   - type: web
-    name: ai-tech-backend
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    name: vero-backend
+    # ── Build ────────────────────────────────────────────────────────────────
+    env: docker                    # tells Render to use the Dockerfile
+    dockerfilePath: ./Dockerfile   # relative to the repo root pushed to Render
+    dockerContext: .               # build context = backend directory root
+
+    # ── Runtime ──────────────────────────────────────────────────────────────
+    healthCheckPath: /health       # Render polls this; must return 2xx
+    autoDeploy: true               # redeploy on every push to main
+
+    # ── Environment variables ────────────────────────────────────────────────
+    # Set secrets in the Render dashboard — do NOT hard-code them here.
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: ai-tech-db
-          property: connectionString
-      - key: JWT_SECRET_KEY
-        generateValue: true
       - key: ENVIRONMENT
         value: production
 
-  - type: psql
-    name: ai-tech-db
-    plan: free
+      - key: DEBUG
+        value: "false"
+
+      # Render injects PORT automatically — this just makes it explicit
+      - key: PORT
+        value: "8000"
+
+      # ── Database (set in dashboard or link to a Render Postgres) ──────────
+      - key: DATABASE_URL
+        sync: false                # mark as secret; fill in Render dashboard
+
+      # ── Auth ──────────────────────────────────────────────────────────────
+      - key: JWT_SECRET_KEY
+        generateValue: true        # Render auto-generates a secure random value
+
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "30"
+
+      # ── Supabase ──────────────────────────────────────────────────────────
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+
+      # ── Google OAuth ──────────────────────────────────────────────────────
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+
+      # ── CORS (comma-separated list of allowed frontend origins) ───────────
+      - key: CORS_ORIGINS
+        sync: false                # e.g. https://yourdomain.com,https://www.yourdomain.com
+
+      # ── Redis ─────────────────────────────────────────────────────────────
+      - key: REDIS_URL
+        sync: false
+
+      # ── Vapi (AI voice calling) ────────────────────────────────────────────
+      - key: VAPI_API_KEY
+        sync: false
+      - key: VAPI_ASSISTANT_ID
+        sync: false
+      - key: VAPI_PHONE_NUMBER_ID
+        sync: false
+      - key: VAPI_WEBHOOK_SECRET
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false                # e.g. https://vero-backend.onrender.com
+
+      # ── Twilio (WhatsApp) ──────────────────────────────────────────────────
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_NUMBER
+        sync: false
+
+      # ── Admin seed ────────────────────────────────────────────────────────
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

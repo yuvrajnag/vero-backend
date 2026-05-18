@@ -1,0 +1,64 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Tests & coverage ──────────────────────────────────────────────────────────
+tests/
+test_*.py
+.pytest_cache/
+.coverage
+htmlcov/
+*.test.py
+
+# ── Local dev / editor ────────────────────────────────────────────────────────
+.git/
+.gitignore
+.github/
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# ── Docker files (no recursive nesting) ──────────────────────────────────────
+docker-compose*.yml
+*.dockerignore
+
+# ── Docs / scripts that don't run in prod ────────────────────────────────────
+README.md
+*.md
+*.txt
+!requirements.txt
+patches.txt
+cols.txt
+scripts/
+alter_enum.py
+update_online.py
+find_history.py
+reconstruct.py
+recovered.tsx
+schema.sql
+
+# ── Runtime artifacts ─────────────────────────────────────────────────────────
+uploads/
+*.log
+*.pid
